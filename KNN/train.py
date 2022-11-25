@@ -21,3 +21,6 @@ clf.fit(X_train,Y_train)
 predictions = clf.predict(X_test)
 
 print(predictions)
+
+acc = np.sum(predictions == Y_test) / len(Y_test)
+print(acc)
