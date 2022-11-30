@@ -12,7 +12,7 @@ class LogisticRegression:
 
     def fit(self, X, Y):
         n_samples, n_features = X.shape
-        self.weights = np.zeros(self.features)
+        self.weights = np.zeros(n_features)
         self.bias = 0
 
         for _ in range(self.n_iter):
