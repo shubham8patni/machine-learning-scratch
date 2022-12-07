@@ -42,7 +42,7 @@ class DecisionTree:
         
 
         # create child nodes
-        left_idxs, right_idxs = self._split(X[: best_feature],best_thresh)
+        left_idxs, right_idxs = self._split(X[:, best_feature],best_thresh)
         left = self._grow_tree(X[left_idxs, :], y[left_idxs], depth + 1)
         right = self._grow_tree(X[right_idxs, :], y[right_idxs], depth + 1)
         return Node(best_feature, best_thresh, left, right)
