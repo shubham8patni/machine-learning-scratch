@@ -15,7 +15,7 @@ class Node:
 
 
 class DecisionTree:
-    def __init__(self, min_samples_split = 2, max_depth = 100, n_features = None):
+    def __init__(self, min_samples_split=2, max_depth=100, n_features=None):
         self.min_samples_split = min_samples_split
         self.max_depth = max_depth
         self.n_features = n_features
@@ -23,22 +23,22 @@ class DecisionTree:
 
 
     def fit(self, X, y):
-        self.n_features = X.shape[1] if not self.n_features else min(X.shape[1], self.n_features)
+        self.n_features = X.shape[1] if not self.n_features else min(X.shape[1],self.n_features)
         self.root = self._grow_tree(X, y)
 
     def _grow_tree(self, X, y, depth=0):
         n_samples, n_feats = X.shape
-        n_labels = np.unique(y)
+        n_labels = len(np.unique(y))
         
         # check stopping criteria
-        if (depth > self.max_depth or n_labels == 1 or  n_samples<self.min_samples_split):
+        if (depth >= self.max_depth or n_labels == 1 or  n_samples<self.min_samples_split):
             leaf_value = self._most_common_label(y)
             return Node(value=leaf_value)
 
-        feat_idx = np.random(n_feats. self.n_features, replace = False)
+        feat_idxs = np.random.choice(n_feats, self.n_features, replace=False)
 
         # find best split
-        best_feature, best_thresh =  self._best_split(X, y, feat_idx) # the part where we create randomness in decision trees
+        best_feature, best_thresh =  self._best_split(X, y, feat_idxs) # the part where we create randomness in decision trees
         
 
         # create child nodes
@@ -52,7 +52,7 @@ class DecisionTree:
         best_gain = -1 
         split_idx, split_threshold = None, None
 
-        for feat_idx, in feat_idxs:
+        for feat_idx in feat_idxs:
             X_column = X[:, feat_idx]
             thresholds = np.unique(X_column)
 
@@ -107,7 +107,7 @@ class DecisionTree:
 
     def _traverse_tree(self, x, node):
         if node.is_leaf_node():
-            return node.value()
+            return node.value
         
         if x[node.feature] <= node.threshold:
             return self._traverse_tree(x, node.left)
