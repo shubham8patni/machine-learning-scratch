@@ -42,6 +42,10 @@ class DecisionTree:
         
 
         # create child nodes
+        left_idxs, right_idxs = self._split(X[: best_feature],best_thresh)
+        left = self._grow_tree(X[left_idxs, :], y[left_idxs], depth + 1)
+        right = self._grow_tree(X[right_idxs, :], y[right_idxs], depth + 1)
+        return Node(best_feature, best_thresh, left, right)
 
 
     def _best_split(self, X,y , feat_idxs):
@@ -54,7 +58,7 @@ class DecisionTree:
 
             for thr in thresholds:
                 # calculate information gain 
-                gain = self._information_gain()
+                gain = self._information_gain(y, X_column, thr)
 
                 if gain > best_gain:
                     best_gain = gain
@@ -69,12 +73,19 @@ class DecisionTree:
         parent_entropy = self._entropy(y)
 
         # create children
-        left_idx, right_idx = self._split(X_column, threshold)
-        if len(left_idx) == 0 or len(right_idx) == 0:
+        left_idxs, right_idxs = self._split(X_column, threshold)
+        if len(left_idxs) == 0 or len(right_idxs) == 0:
             return 0
+
         # calculate the avg. weighted entropy of children
+        n = len(y)
+        n_l, n_r = len(left_idxs), len(right_idxs)
+        e_l, e_r = self._entropy(y[left_idxs]), self._entropy(y[right_idxs])
+        child_entropy = (n_l/n) * e_l + (n_r/n) * e_r
 
         # calculate the informatiopn gain
+        information_gain = parent_entropy - child_entropy
+        return information_gain
 
     def _split(self, X_column, split_threshold):
         left_idxs = np.argwhere(X_column <= split_threshold).flatten()
@@ -91,4 +102,13 @@ class DecisionTree:
         value = counter.most_common(1)[0][0]
         return value
 
-    def predict():
+    def predict(self, X):
+        return np.array([self._traverse_tree(x, self.root) for x in X])
+
+    def _traverse_tree(self, x, node):
+        if node.is_leaf_node():
+            return node.value()
+        
+        if x[node.feature] <= node.threshold:
+            return self._traverse_tree(x, node.left)
+        return self._traverse_tree(x, node.right)
