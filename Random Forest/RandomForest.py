@@ -27,10 +27,14 @@ class RandomForest:
         return X[idxs], y[idxs]
 
 
-    
+    def _most_common_label(self, y):
+        counter = Counter(y)
+        most_common = counter.most_common(1)[0][0]
+        return most_common
 
 
     def predict(self, X):
         predictions = np.array([tree.predict(X) for tree in self.trees])
         tree_preds = np.swapaxes(predictions, 0, 1)    # swap axis so same sample from different trees can be together     
-        
+        predictions = np.array([self._most_common_label(pred) for pred in tree_preds])
+        return predictions
