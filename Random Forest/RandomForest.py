@@ -1,5 +1,7 @@
 from DecisionTree import DecisionTree
 import numpy as np
+from collections import Counter
+
 
 class RandomForest:
     def __init__(self, n_trees = 10, max_depth = 10, min_sample_split = 2, n_feature = None):
@@ -24,4 +26,11 @@ class RandomForest:
         idxs = np.random.choice(n_samples, n_samples, replace = True)
         return X[idxs], y[idxs]
 
-    def predict()
+
+    
+
+
+    def predict(self, X):
+        predictions = np.array([tree.predict(X) for tree in self.trees])
+        tree_preds = np.swapaxes(predictions, 0, 1)    # swap axis so same sample from different trees can be together     
+        
