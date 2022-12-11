@@ -16,7 +16,7 @@ def accuracy(y_true, y_pred):
     return accuracy
 
 
-clf = RandomForest()
+clf = RandomForest(n_trees = 20)
 clf.fit(X_train, y_train)
 predictions = clf.predict(X_test)
 
